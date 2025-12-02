@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Онлайн тест</title>
+    <style>
+        html, body, div, span, applet, object, iframe,
+        h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+        a, abbr, acronym, address, big, cite, code,
+        del, dfn, em, img, ins, kbd, q, s, samp,
+        small, strike, strong, sub, sup, tt, var,
+        b, u, i, center,
+        dl, dt, dd, ol, ul, li,
+        fieldset, form, label, legend,
+        table, caption, tbody, tfoot, thead, tr, th, td,
+        article, aside, canvas, details, embed,
+        figure, figcaption, footer, header, hgroup,
+        menu, nav, output, ruby, section, summary,
+        time, mark, audio, video {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 100%;
+            font: inherit;
+            vertical-align: baseline;
+        }
+        /* HTML5 display-role reset for older browsers */
+        article, aside, details, figcaption, figure,
+        footer, header, hgroup, menu, nav, section {
+            display: block;
+        }
+        body {
+            line-height: 1;
+        }
+        ol, ul {
+            list-style: none;
+        }
+        blockquote, q {
+            quotes: none;
+        }
+        blockquote:before, blockquote:after,
+        q:before, q:after {
+            content: '';
+            content: none;
+        }
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        body {
+            height: 100vh;
+            overflow: hidden;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 24px;
+            color: #333333;
+            background: #f8f9fa;
+        }
+
+        h2 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .warning {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+            background: rgba(0,0,0,0.9);
+            color: #fff;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .warning-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-grow: 1;
+            height: 100%;
+            padding: 20px;
+            margin: auto;
+        }
+
+        .failed {
+            display: none;
+            position: fixed;
+            inset: 0;
+            padding: 20px;
+            background: #f8f9fa;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .warning-buttons button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+<iframe id="test-frame" src="https://docs.google.com/forms/d/e/1FAIpQLScGkcK51paHwbq8dty0irjYap-_ND3Wjyb6zM_bxhSIZ7qS4g/viewform?embedded=true" frameborder="0" marginheight="0" marginwidth="0">Завантаження…</iframe>
+<div id="warning" class="warning">
+    <div class="warning-content">
+        <h2 id="warning-text">Ви намагаєтесь залишити сторінку тесту!</h2>
+        <p>Якщо ви залишите сторінку тесту, Ви більше не зможете надавати відповіді й тест буде провалено!</p>
+        <div class="warning-buttons">
+            <button id="close-modal" type="button">Закрити це повідомлення</button>
+            <button id="finish-test" type="button">Відкрити нову вкладку і провалити тест</button>
+        </div>
+    </div>
+</div>
+<div id="failed" class="failed">
+    <h2>Ви залишили сторінку тесту!</h2>
+    <p>Ваш тест провалено!</p>
+    <p>Зверніться до викладача!</p>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const warning = document.getElementById("warning");
+        const warningText = document.getElementById("warning-text");
+        const failed = document.getElementById("failed");
+        const iframe = document.getElementById("test-frame");
+        const closeModal = document.getElementById("close-modal");
+        const finishTest = document.getElementById("finish-test");
+        const maxAttempts = 3;
+        let leaveAttempts = 0;
+
+        if (localStorage.getItem("testFailed") === "true") {
+            iframe.style.display = "none";
+            failed.style.display = "flex";
+        }
+
+        function failTest() {
+            localStorage.setItem("testFailed", "true");
+            iframe.style.display = "none";
+            warning.style.display = "none";
+            failed.style.display = "flex";
+        }
+
+        function showWarning() {
+            leaveAttempts++;
+
+            if (leaveAttempts >= maxAttempts) {
+                failTest();
+                return;
+            }
+
+            warningText.textContent = `Ви намагаєтесь залишити сторінку тесту! (${leaveAttempts}/${maxAttempts})`;
+            warning.style.display = "flex";
+        }
+
+        document.addEventListener("visibilitychange", function() {
+            if (document.hidden) {
+                showWarning();
+            }
+        });
+
+        closeModal.addEventListener("click", function() {
+            warning.style.display = "none";
+        });
+
+        finishTest.addEventListener("click", function() {
+            failTest();
+        });
+    });
+</script>
+
+</body>
+</html>
