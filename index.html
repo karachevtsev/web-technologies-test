@@ -147,6 +147,10 @@
     <p>Ваш тест провалено!</p>
     <p>Зверніться до викладача!</p>
 </div>
+<button id="clear-storage"
+        style="display:none; position:fixed; bottom:20px; right:20px; padding:10px 20px; font-size:18px;">
+    Очистити LocalStorage
+</button>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const warning = document.getElementById("warning");
@@ -194,6 +198,21 @@
 
         finishTest.addEventListener("click", function() {
             failTest();
+        });
+
+        const params = new URLSearchParams(window.location.search);
+        const isAdmin = params.get("admin") === "true";
+
+        const clearBtn = document.getElementById("clear-storage");
+
+        if (isAdmin) {
+            clearBtn.style.display = "block";
+        }
+
+        clearBtn.addEventListener("click", function() {
+            localStorage.removeItem("testFailed");
+            alert("Додано нову спробу для складання тесту!");
+            location.reload();
         });
     });
 </script>
