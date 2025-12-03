@@ -25,7 +25,7 @@
             font: inherit;
             vertical-align: baseline;
         }
-        /* HTML5 display-role reset for older browsers */
+
         article, aside, details, figcaption, figure,
         footer, header, hgroup, menu, nav, section {
             display: block;
@@ -111,6 +111,22 @@
             margin: 10px;
             padding: 10px 20px;
             font-size: 18px;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+
+            &:hover {
+                opacity: 0.8;
+            }
+        }
+
+        .btn-close {
+            background: #0d2fdc;
+        }
+
+        .btn-finish {
+            background: #dc0d0d;
         }
     </style>
 </head>
@@ -121,8 +137,8 @@
         <h2 id="warning-text">Ви намагаєтесь залишити сторінку тесту!</h2>
         <p>Якщо ви залишите сторінку тесту, Ви більше не зможете надавати відповіді й тест буде провалено!</p>
         <div class="warning-buttons">
-            <button id="close-modal" type="button">Закрити це повідомлення</button>
-            <button id="finish-test" type="button">Відкрити нову вкладку і провалити тест</button>
+            <button id="close-modal" type="button" class="btn-close">Закрити це повідомлення</button>
+            <button id="finish-test" type="button" class="btn-finish">Відкрити нову вкладку і провалити тест</button>
         </div>
     </div>
 </div>
@@ -131,7 +147,6 @@
     <p>Ваш тест провалено!</p>
     <p>Зверніться до викладача!</p>
 </div>
-
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const warning = document.getElementById("warning");
@@ -140,7 +155,7 @@
         const iframe = document.getElementById("test-frame");
         const closeModal = document.getElementById("close-modal");
         const finishTest = document.getElementById("finish-test");
-        const maxAttempts = 3;
+        const maxAttempts = 4;
         let leaveAttempts = 0;
 
         if (localStorage.getItem("testFailed") === "true") {
@@ -182,6 +197,5 @@
         });
     });
 </script>
-
 </body>
 </html>
