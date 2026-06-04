@@ -3,217 +3,700 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Онлайн тест</title>
+    <title>Підсумковий тестовий контроль з  предмету Веб-технології: JavaScript</title>
     <style>
-        html, body, div, span, applet, object, iframe,
-        h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-        a, abbr, acronym, address, big, cite, code,
-        del, dfn, em, img, ins, kbd, q, s, samp,
-        small, strike, strong, sub, sup, tt, var,
-        b, u, i, center,
-        dl, dt, dd, ol, ul, li,
-        fieldset, form, label, legend,
-        table, caption, tbody, tfoot, thead, tr, th, td,
-        article, aside, canvas, details, embed,
-        figure, figcaption, footer, header, hgroup,
-        menu, nav, output, ruby, section, summary,
-        time, mark, audio, video {
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
-            border: 0;
-            font-size: 100%;
-            font: inherit;
-            vertical-align: baseline;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
         }
 
-        article, aside, details, figcaption, figure,
-        footer, header, hgroup, menu, nav, section {
-            display: block;
-        }
-        body {
-            line-height: 1;
-        }
-        ol, ul {
-            list-style: none;
-        }
-        blockquote, q {
-            quotes: none;
-        }
-        blockquote:before, blockquote:after,
-        q:before, q:after {
-            content: '';
-            content: none;
-        }
-        table {
-            border-collapse: collapse;
-            border-spacing: 0;
+        :root {
+            --bg: rgba(0, 0, 0, 0.2);
+            --surface: #1a1d27;
+            --border: #2a2d3e;
+            --accent: #3b5bdb;
+            --accent-hover: #4c6ef5;
+            --danger: #c92a2a;
+            --danger-hover: #e03131;
+            --text: #e8eaf0;
+            --text-muted: #868e96;
+            --radius: 12px;
         }
 
-        body {
-            height: 100vh;
-            overflow: hidden;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 24px;
-            color: #333333;
-            background: #f8f9fa;
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
         }
 
-        h2 {
-            font-size: 28px;
+        /* ─── START SCREEN ─── */
+        #start-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            padding: 24px;
+            animation: fadeIn .4s ease;
+        }
+
+        .start-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 48px 56px;
+            max-width: 540px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            text-align: center;
+            box-shadow: 0 24px 64px rgba(0,0,0,.5);
+        }
+
+        .start-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--accent);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 4px;
+        }
+
+        .start-card h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -.4px;
+        }
+
+        .start-card p {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            max-width: 380px;
+        }
+
+        .rules {
+            background: rgba(59,91,219,.08);
+            border: 1px solid rgba(59,91,219,.25);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .rules-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-hover);
+            margin-bottom: 2px;
+        }
+
+        .rule-item {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .rule-item::before {
+            content: '·';
+            color: var(--accent-hover);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        #start-btn {
+            margin-top: 4px;
+            padding: 14px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: background .15s, transform .1s;
+            width: 100%;
+        }
+
+        #start-btn:hover { background: var(--accent-hover); }
+        #start-btn:active { transform: scale(.98); }
+
+        /* ─── IFRAME ─── */
+        #test-frame {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: none;
+        }
+
+        /* ─── WARNING OVERLAY ─── */
+        #warning {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0,0,0,.92);
+            backdrop-filter: blur(6px);
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        #warning.visible { display: flex; }
+
+        .warning-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px 48px;
+            max-width: 520px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            text-align: center;
+            box-shadow: 0 24px 64px rgba(0,0,0,.6);
+            animation: slideUp .25s ease;
+        }
+
+        .warning-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(201,42,42,.15);
+            border: 1px solid rgba(201,42,42,.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+        }
+
+        .warning-card h2 {
+            font-size: 20px;
             font-weight: 700;
         }
 
-        iframe {
-            border: none;
-            width: 100%;
-            height: 100%;
+        #warning-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
         }
 
-        .warning {
+        .attempts-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .attempts-fill {
+            height: 100%;
+            border-radius: 99px;
+            background: var(--danger);
+            transition: width .3s ease;
+        }
+
+        .warning-buttons {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: background .15s, transform .1s;
+        }
+
+        .btn:active { transform: scale(.97); }
+
+        .btn-close {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-close:hover { background: var(--accent-hover); }
+
+        .btn-finish {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid rgba(201,42,42,.35);
+        }
+        .btn-finish:hover {
+            background: rgba(201,42,42,.08);
+        }
+
+        /* ─── FAILED SCREEN ─── */
+        #failed {
             display: none;
             position: fixed;
             inset: 0;
-            z-index: 10;
-            background: rgba(0,0,0,0.9);
-            color: #fff;
+            background: var(--bg);
             align-items: center;
-            flex-direction: column;
             justify-content: center;
-            text-align: center;
+            padding: 24px;
         }
 
-        .warning-content {
+        #failed.visible { display: flex; }
+
+        .failed-card {
+            background: var(--surface);
+            border: 1px solid rgba(201,42,42,.25);
+            border-radius: 20px;
+            padding: 48px 56px;
+            max-width: 480px;
+            width: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            gap: 20px;
-            flex-grow: 1;
-            height: 100%;
-            padding: 20px;
-            margin: auto;
+            gap: 16px;
+            text-align: center;
+            box-shadow: 0 24px 64px rgba(0,0,0,.5);
         }
 
-        .failed {
+        .failed-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(201,42,42,.12);
+            border: 1px solid rgba(201,42,42,.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .failed-card h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ff6b6b;
+        }
+
+        .failed-card p {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ─── ADMIN BTN ─── */
+        #clear-storage {
             display: none;
             position: fixed;
-            inset: 0;
-            padding: 20px;
-            background: #f8f9fa;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            flex-direction: column;
-            gap: 20px;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            background: var(--surface);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            z-index: 300;
+            transition: background .15s;
         }
 
-        .warning-buttons button {
-            margin: 10px;
-            padding: 10px 20px;
-            font-size: 18px;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
+        #clear-storage:hover { background: var(--border); }
 
-            &:hover {
-                opacity: 0.8;
+        /* ─── ANIMATIONS ─── */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── MOBILE RESPONSIVE ─── */
+
+        @media (max-width: 768px) {
+
+            #start-screen,
+            #warning,
+            #failed {
+                padding: 16px;
+                overflow-y: auto;
+            }
+
+            .start-card,
+            .warning-card,
+            .failed-card {
+                max-width: 100%;
+                padding: 24px 20px;
+                border-radius: 16px;
+                max-height: calc(100vh - 32px);
+                overflow-y: auto;
+            }
+
+            .start-card h1 {
+                font-size: 22px;
+            }
+
+            .warning-card h2,
+            .failed-card h2 {
+                font-size: 20px;
+            }
+
+            .start-card p,
+            .failed-card p,
+            #warning-text {
+                font-size: 14px;
+            }
+
+            .rules {
+                padding: 14px;
+                gap: 10px;
+            }
+
+            .rule-item {
+                font-size: 13px;
+                line-height: 1.5;
+            }
+
+            .start-icon {
+                width: 56px;
+                height: 56px;
+                font-size: 28px;
+            }
+
+            .warning-icon {
+                width: 52px;
+                height: 52px;
+                font-size: 24px;
+            }
+
+            .failed-icon {
+                width: 56px;
+                height: 56px;
+                font-size: 28px;
+            }
+
+            .warning-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn,
+            #start-btn {
+                width: 100%;
+                min-height: 48px;
+                font-size: 15px;
+            }
+
+            #clear-storage {
+                bottom: 12px;
+                right: 12px;
+                font-size: 12px;
+                padding: 8px 12px;
             }
         }
 
-        .btn-close {
-            background: #0d2fdc;
+        @media (max-width: 480px) {
+
+            #start-screen,
+            #warning,
+            #failed {
+                padding: 12px;
+            }
+
+            .start-card,
+            .warning-card,
+            .failed-card {
+                padding: 20px 16px;
+                border-radius: 14px;
+                gap: 14px;
+            }
+
+            .start-card h1 {
+                font-size: 20px;
+            }
+
+            .warning-card h2,
+            .failed-card h2 {
+                font-size: 18px;
+            }
+
+            .start-card p,
+            .failed-card p,
+            #warning-text {
+                font-size: 13px;
+            }
+
+            .rules-title {
+                font-size: 11px;
+            }
+
+            .rule-item {
+                font-size: 12px;
+            }
+
+            .btn,
+            #start-btn {
+                font-size: 14px;
+                padding: 12px;
+            }
         }
 
-        .btn-finish {
-            background: #dc0d0d;
+        @media (max-height: 700px) {
+
+            .start-card,
+            .warning-card,
+            .failed-card {
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            .start-icon,
+            .warning-icon,
+            .failed-icon {
+                margin-bottom: 0;
+            }
         }
     </style>
 </head>
 <body>
-<iframe id="test-frame" src="https://docs.google.com/forms/d/e/1FAIpQLScGkcK51paHwbq8dty0irjYap-_ND3Wjyb6zM_bxhSIZ7qS4g/viewform?embedded=true" frameborder="0" marginheight="0" marginwidth="0">Завантаження…</iframe>
-<div id="warning" class="warning">
-    <div class="warning-content">
-        <h2 id="warning-text">Ви намагаєтесь залишити сторінку тесту!</h2>
-        <p>Якщо ви залишите сторінку тесту, Ви більше не зможете надавати відповіді й тест буде провалено!</p>
+<!-- Start screen -->
+<div id="start-screen">
+    <div class="start-card">
+        <div class="start-icon">📝</div>
+        <h1>Підсумковий тест</h1>
+        <p>Перед початком ознайомтесь з правилами проходження тесту.</p>
+        <div class="rules">
+            <div class="rules-title">Правила</div>
+            <div class="rule-item">Тест проходить у повноекранному режимі</div>
+            <div class="rule-item">Не виходьте зі сторінки та не мінімізуйте браузер</div>
+            <div class="rule-item">Вихід зі сторінки зараховується як порушення</div>
+            <div class="rule-item">Після 2-х порушень тест автоматично провалюється</div>
+            <div class="rule-item">Поновлення складання тесту - 10 балів від 30 можливих</div>
+        </div>
+        <button id="start-btn">Розпочати тест</button>
+    </div>
+</div>
+
+<!-- Test iframe -->
+<iframe
+    id="test-frame"
+    src="https://docs.google.com/forms/d/e/1FAIpQLSeclYKcYF3yEsKr6thtpYYDh9-mHJD-Ju5F3yW-kwh2DiVfoQ/viewform?embedded=true"
+    marginheight="0"
+    marginwidth="0"
+>Завантаження…</iframe>
+
+<!-- Warning overlay -->
+<div id="warning">
+    <div class="warning-card">
+        <div class="warning-icon">⚠️</div>
+        <h2>Порушення!</h2>
+        <p id="warning-text">Ви намагаєтесь залишити сторінку тесту!</p>
+        <div class="attempts-bar">
+            <div class="attempts-fill" id="attempts-fill" style="width:0%"></div>
+        </div>
         <div class="warning-buttons">
-            <button id="close-modal" type="button" class="btn-close">Закрити це повідомлення</button>
-            <button id="finish-test" type="button" class="btn-finish">Відкрити нову вкладку і провалити тест</button>
+            <button id="close-modal" class="btn btn-close">Повернутись до тесту</button>
+            <button id="finish-test" class="btn btn-finish">Провалити тест</button>
         </div>
     </div>
 </div>
-<div id="failed" class="failed">
-    <h2>Ви залишили сторінку тесту!</h2>
-    <p>Ваш тест провалено!</p>
-    <p>Зверніться до викладача!</p>
+
+<!-- Failed screen -->
+<div id="failed">
+    <div class="failed-card">
+        <div class="failed-icon">✗</div>
+        <h2>Тест провалено</h2>
+        <p>Ви залишили сторінку тесту.<br>Зверніться до викладача.</p>
+    </div>
 </div>
-<button id="clear-storage"
-        style="display:none; position:fixed; bottom:20px; right:20px; padding:10px 20px; font-size:18px;">
-    Очистити LocalStorage
-</button>
+
+<!-- Admin button -->
+<button id="clear-storage">🔑 Скинути спробу</button>
+
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const warning = document.getElementById("warning");
-        const warningText = document.getElementById("warning-text");
-        const failed = document.getElementById("failed");
-        const iframe = document.getElementById("test-frame");
-        const closeModal = document.getElementById("close-modal");
-        const finishTest = document.getElementById("finish-test");
-        const maxAttempts = 4;
-        let leaveAttempts = 0;
+    // ─── Elements ───
+    const startScreen  = document.getElementById('start-screen');
+    const startBtn     = document.getElementById('start-btn');
+    const iframe       = document.getElementById('test-frame');
+    const warning      = document.getElementById('warning');
+    const warningText  = document.getElementById('warning-text');
+    const attemptsFill = document.getElementById('attempts-fill');
+    const failed       = document.getElementById('failed');
+    const closeModal   = document.getElementById('close-modal');
+    const finishBtn    = document.getElementById('finish-test');
+    const clearBtn     = document.getElementById('clear-storage');
 
-        if (localStorage.getItem("testFailed") === "true") {
-            iframe.style.display = "none";
-            failed.style.display = "flex";
-        }
+    const MAX_ATTEMPTS = 2;
+    const STORAGE_KEY = 'testFailedJS';
+    let leaveAttempts  = 0;
+    let warningActive  = false;
+    let testStarted    = false;
 
-        function failTest() {
-            localStorage.setItem("testFailed", "true");
-            iframe.style.display = "none";
-            warning.style.display = "none";
-            failed.style.display = "flex";
-        }
+    // ─── Admin mode ───
+    const params  = new URLSearchParams(window.location.search);
+    const isAdmin = params.get('admin') === 'true';
+    if (isAdmin) clearBtn.style.display = 'block';
 
-        function showWarning() {
-            leaveAttempts++;
+    clearBtn.addEventListener('click', () => {
+        localStorage.removeItem(STORAGE_KEY);
+        alert('Спробу скинуто!');
+        location.reload();
+    });
 
-            if (leaveAttempts >= maxAttempts) {
-                failTest();
-                return;
-            }
+    // ─── Check if already failed ───
+    if (localStorage.getItem(STORAGE_KEY) === 'true') {
+        startScreen.style.display = 'none';
+        failed.classList.add('visible');
+    }
 
-            warningText.textContent = `Ви намагаєтесь залишити сторінку тесту! (${leaveAttempts}/${maxAttempts})`;
-            warning.style.display = "flex";
-        }
+    // guardUntil — timestamp до якого всі події ігноруються
+    let guardUntil = 0;
+    const guard = (ms) => { guardUntil = Date.now() + ms; };
+    const isGuarded = () => Date.now() < guardUntil;
 
-        document.addEventListener("visibilitychange", function() {
-            if (document.hidden) {
-                showWarning();
-            }
-        });
+    // ─── Start test ───
+    startBtn.addEventListener('click', async () => {
+        guard(2000);
+        try {
+            await document.documentElement.requestFullscreen();
+        } catch (_) {}
 
-        closeModal.addEventListener("click", function() {
-            warning.style.display = "none";
-        });
+        startScreen.style.display = 'none';
+        iframe.style.display = 'block';
+        testStarted = true;
+        guard(2000);
+    });
 
-        finishTest.addEventListener("click", function() {
+    // Google Forms показує нативний alert при сабміті — вікно втрачає фокус.
+    // Після кожного load iframe (включно з редіректом після сабміту) — ставимо guard.
+    iframe.addEventListener('load', () => {
+        if (testStarted) guard(4000);
+    });
+
+    // ─── Fail test ───
+    function failTest() {
+        localStorage.setItem('testFailed', 'true');
+        iframe.style.display  = 'none';
+        warning.classList.remove('visible');
+        failed.classList.add('visible');
+    }
+
+    // ─── Show warning ───
+    function showWarning() {
+        if (!testStarted) return;
+        if (warningActive) return;
+        if (isGuarded()) return;
+
+        leaveAttempts++;
+        warningActive = true;
+
+        if (leaveAttempts >= MAX_ATTEMPTS) {
             failTest();
-        });
-
-        const params = new URLSearchParams(window.location.search);
-        const isAdmin = params.get("admin") === "true";
-
-        const clearBtn = document.getElementById("clear-storage");
-
-        if (isAdmin) {
-            clearBtn.style.display = "block";
+            return;
         }
 
-        clearBtn.addEventListener("click", function() {
-            localStorage.removeItem("testFailed");
-            alert("Додано нову спробу для складання тесту!");
-            location.reload();
-        });
+        const pct = (leaveAttempts / MAX_ATTEMPTS) * 100;
+        attemptsFill.style.width = pct + '%';
+
+        warningText.textContent =
+            `Порушення ${leaveAttempts} з ${MAX_ATTEMPTS}. При наступному порушенні тест буде провалено!`;
+
+        warning.classList.add('visible');
+    }
+
+    // ─── Close warning → back to fullscreen ───
+    closeModal.addEventListener('click', () => {
+        warning.classList.remove('visible');
+        warningActive = false;
+        guard(1500);
+        document.documentElement.requestFullscreen?.().catch(() => {});
+    });
+
+    finishBtn.addEventListener('click', failTest);
+
+    // ─── Visibility change (tab switch, minimize) ───
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) showWarning();
+    });
+
+    // ─── Fullscreen exit ───
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement && testStarted) {
+            showWarning();
+        }
+    });
+
+    // ─── DevTools detection (розмір вікна) ───
+    // Запускаємо лише після старту тесту, з дебаунсом, щоб не спрацьовувало при resize
+    let devtoolsTimer = null;
+    window.addEventListener('resize', () => {
+        if (!testStarted) return;
+        clearTimeout(devtoolsTimer);
+        devtoolsTimer = setTimeout(() => {
+            const wDiff = window.outerWidth  - window.innerWidth;
+            const hDiff = window.outerHeight - window.innerHeight;
+            if (wDiff > 200 || hDiff > 200) showWarning();
+        }, 500);
+    });
+
+    // ─── Block copy / paste / cut / context menu / drag ───
+    ['copy', 'paste', 'cut', 'contextmenu', 'selectstart', 'dragstart']
+        .forEach(evt => document.addEventListener(evt, e => e.preventDefault()));
+
+    // ─── Block keyboard shortcuts ───
+    document.addEventListener('keydown', e => {
+        const k = e.key.toLowerCase();
+
+        // Ctrl + C/V/X/A/S/U/P
+        if (e.ctrlKey && ['c','v','x','a','s','u','p'].includes(k)) {
+            e.preventDefault(); return;
+        }
+
+        // Ctrl + Shift + I/J/C
+        if (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(k)) {
+            e.preventDefault(); return;
+        }
+
+        // F12
+        if (e.key === 'F12') {
+            e.preventDefault(); return;
+        }
+
+        // Alt+Tab — не перехоплюється браузером, але Alt+F4 можна
+        if (e.altKey && e.key === 'F4') {
+            e.preventDefault(); return;
+        }
     });
 </script>
 </body>
