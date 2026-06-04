@@ -577,6 +577,7 @@
     // ─── Check if already failed ───
     if (localStorage.getItem(STORAGE_KEY) === 'true') {
         startScreen.style.display = 'none';
+        iframe.style.display = 'none';
         failed.classList.add('visible');
     }
 
@@ -606,7 +607,8 @@
 
     // ─── Fail test ───
     function failTest() {
-        localStorage.setItem('testFailed', 'true');
+        localStorage.setItem(STORAGE_KEY, 'true');
+        startScreen.style.display = 'none';
         iframe.style.display  = 'none';
         warning.classList.remove('visible');
         failed.classList.add('visible');
